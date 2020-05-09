@@ -1,59 +1,139 @@
 package CrudOperations;
 
-import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-public class PrintingAndSwtiching {
+public class Connector {
 
-    private Student student = new Student();
     private Scanner sc = new Scanner(System.in);
-    private Connector connector = new Connector();
+    private String driver = "com.mysql.cj.jdbc.Driver";
+    private Connection con;
+    private String url = "jdbc:mysql://localhost:3306/javaproject";
+    private String user = "root";
+    private String password = "root";
 
-    public void justPrinting() {
-        System.out.println("1) ADD STUDENT ");
-        System.out.println("2) DELETE STUDENT");
-        System.out.println("3) DISPLAY STUDENT");
-        System.out.println("4) UPDATE STUDENT");
-        System.out.println("5) EXIT");
-    }
-
-    public void multipleChoices(int choice) {
-        switch (choice) {
-            case 1:
-                System.out.print("Enter Your FirstName : ");
-                String fname = sc.next();
-                System.out.print("Enter Your LastName : ");
-                String lname = sc.next();
-                System.out.print("Enter Your Age : ");
-                int age = sc.nextInt();
-                student.settingStudents(fname, lname, age);
-                connector.insertData(student);
-                break;
-            case 2:
-                System.out.print("Enter Your Student Id To Delete : ");
-                int delete = sc.nextInt();
-                connector.deleteStudent(delete);
-                break;
-            case 3:
-                connector.displayData();
-                break;
-            case 4:
-                System.out.println("Enter your Student Id To Updating The Process : ");
-                int studentid = sc.nextInt();
-                System.out.println("1) update first name");
-                System.out.println("2) update last name");
-                System.out.println("3) update age");
-                System.out.println("4) main menu ");
-                System.out.print("Choice : ");
-                int choice1 = sc.nextInt();
-                connector.updateStudent(studentid, choice1);
-            case 5:
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Invalid Choice");
-                break;
+    public void displayData() {
+        try {
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, user, password);
+            PreparedStatement preparedstatement = con.prepareStatement("select * from students");
+            ResultSet resultset = preparedstatement.executeQuery();
+            while (resultset.next()) {
+                System.out.println("Id : " + resultset.getInt("id"));
+                System.out.println("First Name : " + resultset.getString("fname"));
+                System.out.println("Last Name : " + resultset.getString("lname"));
+                System.out.println("Age : " + resultset.getInt("age"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    public void insertData(Student student) {
+        try {
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, user, password);
+            String q = "insert into students (fname,lname,age) values (?,?,?)";
+            PreparedStatement preparedstatement = con.prepareStatement(q);
+            preparedstatement.setString(1, student.getFirstname());
+            preparedstatement.setString(2, student.getLastname());
+            preparedstatement.setInt(3, student.getAge());
+            preparedstatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteStudent(int i) {
+        try {
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, user, password);
+            String q = "delete from students where id = ?";
+            PreparedStatement preparedstatement = con.prepareStatement(q);
+            preparedstatement.setInt(1, i);
+            preparedstatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStudent(int studentid, int choice) {
+        try {
+            
+            if (choice == 1) {
+                System.out.print("Enter the first new name : ");
+                String newname = sc.next();
+                Class.forName(driver);
+                con = DriverManager.getConnection(url, user, password);
+                String q = "update students set fname = ? where id = ?";
+                PreparedStatement preparedstatement = con.prepareStatement(q);
+                preparedstatement.setString(studentid, newname);
+                preparedstatement.executeUpdate();
+            } else if (choice==2) {
+                System.out.print("Enter the last new name : ");
+                String lastname = sc.next();
+                Class.forName(driver);
+                con = DriverManager.getConnection(url, user, password);
+                String q = "update students set lname = ? where id = ?";
+                PreparedStatement preparedstatement = con.prepareStatement(q);
+                preparedstatement.setString(studentid, lastname);
+                preparedstatement.executeUpdate();
+            } else if (choice==3) {
+                System.out.println("Enter your new age : ");
+                int newage = sc.nextInt();
+                Class.forName(driver);
+                con = DriverManager.getConnection(url, user, password);
+                String q = "update students set fname = ? where id = ?";
+                PreparedStatement preparedstatement = con.prepareStatement(q);
+                preparedstatement.setInt(studentid,newage);
+                preparedstatement.executeUpdate();
+            } else if (choice==4) {
+            } else {
+                System.out.println("Invalid Choice");
+                System.exit(0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStudent1(String lnn) {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStudnet2(int age) {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public void updatingStudents(int choice) {
+//
+//        switch (choice1) {
+//            case 1:
+//                
+//                break;
+//            case 2:
+//                
+//                break;
+//            case 3:
+//                
+//                break;
+//            case 4:
+//
+//                break;
+//            default:
+//                System.out.println("Invalid Choice");
+//        }
+//    }
 }
