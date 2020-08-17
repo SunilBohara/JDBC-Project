@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import static java.lang.System.out;
+
 public class Connector {
 
     //private PrintingAndSwtiching pas = new PrintingAndSwtiching();
@@ -60,86 +62,64 @@ public class Connector {
             e.printStackTrace();
         }
     }
-
-    public void updateStudent(int studentid, int choice) {
-        try {
+    
+    
+    /**
+    @param id student id
+    @param field the field to update
+    */
+    /*field : eg -> lname, fname, age etc*/
+    public void updateStudent(int id, String field){
+        
+        Scanner scan = new Scanner(System.in);
+        String newInfo = null;
             
-            if (choice == 1) {
-                System.out.print("Enter the first new name : ");
-                String newname = sc.next();
-                Class.forName(driver);
-                con = DriverManager.getConnection(url, user, password);
-                String q = "update students set fname = ? where id = ?";
-                PreparedStatement preparedstatement = con.prepareStatement(q);
-                preparedstatement.setString(1, newname);
-                preparedstatement.setString(2, String.valueOf(studentid));
-                preparedstatement.executeUpdate();
-            } else if (choice==2) {
-                System.out.print("Enter the last new name : ");
-                String lastname = sc.next();
-                Class.forName(driver);
-                con = DriverManager.getConnection(url, user, password);
-                String q = "update students set lname = ? where id = ?";
-                PreparedStatement preparedstatement = con.prepareStatement(q);
-                preparedstatement.setString(1, lastname);
-                preparedstatement.setString(2, String.valueOf(studentid));
-                preparedstatement.executeUpdate();
-            } else if (choice==3) {
-                System.out.println("Enter your new age : ");
-                int newage = sc.nextInt();
-                Class.forName(driver);
-                con = DriverManager.getConnection(url, user, password);
-                String q = "update students set fname = ? where id = ?";
-                PreparedStatement preparedstatement = con.prepareStatement(q);
-                preparedstatement.setInt(1,newage);
-                preparedstatement.setInt(2, studentid);
-                preparedstatement.executeUpdate();
-            } else if (choice==4) {
-                
-                //pas.multipleChoices(choice);
-            } else {
-                System.out.println("Invalid Choice");
-                System.exit(0);
+        switch(field){
+            
+            case "lname": {
+                out.println("Enter new first name: ");
+            break;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+            case "fname":{
+                out.println("Enter new last name: ");
+            break;
+            }
 
-    public void updateStudent1(String lnn) {
+            case "age":{
+                out.println("Enter new age: ");
+            break;
+            }
+
+            default: {
+                out.println("Filed does not exist! Try fname, lname or age");
+                //try avoiding exit
+                System.exit(0);
+            break;
+            }
+        }
+            
+        newInfo = scan.nextLine();
+        updateDB(id, field, newInfo);
+        
+        scan.close();
+    }
+    
+    
+    private void updateDB(int id, String field, String updated){
         try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, user, password);
+            String query = "update students set " + field + " = ? where id = ?";
+            
+            PreparedStatement preparedstatement = con.prepareStatement(query);
+            preparedstatement.setString(1, updated);
+            preparedstatement.setString(2, String.valueOf(id));
+            preparedstatement.executeUpdate();
+            
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
-    public void updateStudnet2(int age) {
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-//    public void updatingStudents(int choice) {
-//
-//        switch (choice1) {
-//            case 1:
-//                
-//                break;
-//            case 2:
-//                
-//                break;
-//            case 3:
-//                
-//                break;
-//            case 4:
-//
-//                break;
-//            default:
-//                System.out.println("Invalid Choice");
-//        }
-//    }
 }
